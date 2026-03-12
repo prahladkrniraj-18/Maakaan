@@ -1,0 +1,125 @@
+/* index page */
+.button {
+  display: flex;
+  gap: 10px;
+}
+
+.navbar {
+  height: 5rem;
+  background-color: white;
+}
+
+.fa-house {
+  font-size: 2rem;
+  color: #fe424d;
+}
+
+.nav-link {
+  font-size: 1.2rem;
+  color: #222222 !important;
+}
+.container_footer {
+  background-color: #ebebeb;
+  display: flex;
+  justify-content: space-between; /* pushes items to left & right */
+  padding: 20px 20px; /* optional padding for better appearance */
+}
+
+.f-info {
+  text-decoration: none;
+  color: black;
+}
+.f-info:hover {
+  text-decoration: underline;
+}
+.social_links a {
+  margin-right: 10px; /* space between icons */
+  color: black;
+  font-size: 1rem;
+}
+/* .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+} */
+.card {
+  margin-bottom: 2rem;
+  /* margin-left: 1rem; */
+  border: none;
+  transition: box-shadow 0.3s;
+}
+/* .card:hover {
+  box-shadow: 1px 1px 5px black;
+} */
+.card-img-top {
+  border-radius: 1rem !important;
+  width: 100% !important;
+}
+
+card-body {
+  padding: 0;
+}
+
+.plus-jakarta-sans-normal-400 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400 !important;
+  font-style: normal;
+}
+.listing-links {
+  text-decoration: none;
+}
+
+.card-img-overlay {
+  opacity: 0;
+}
+
+.card-img-overlay:hover {
+  opacity: 0.3;
+  background-color: aliceblue;
+  transition: opacity 0.3s ease;
+}
+
+.montserrat-600 {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600 !important;
+  font-style: normal;
+}
+
+.maakaan-logo {
+  font-size: 1.5rem;
+  color: #fe424d !important;
+}
+
+.comfortaa-600 {
+  font-family: "Comfortaa", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* new page */
+
+body {
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.container {
+  margin-top: auto;
+}
+
+/* Edit Profile Page  */
+
+.btn-red {
+  background-color: #fe424d;
+  color: white;
+}
+
+/* show page */
+
+.show-image {
+  height: 30vh;
+}
