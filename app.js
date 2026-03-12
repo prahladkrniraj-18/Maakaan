@@ -55,7 +55,7 @@ app.delete(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const deletedListing = await Listing.deleteOne({ _id: id });
-    console.log("Listing Deleted");
+    console.log("Listing Deleted"); // This will delete the listing with the given id from the database
     console.log(deletedListing);
     res.redirect("/listing");
   }),
