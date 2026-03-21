@@ -24,7 +24,11 @@ const ExpressError = require("./util/ExpressError.js"); //custom error class to 
 
 const { listingSchema } = require("./schema.js"); //for validating the data sent in request body for creating and updating listing
 
+const { reviewSchema } = require("./review_schema.js");
+
 const Listing = require("./models/listing.js");
+const Review = require("./models/review.js");
+
 const mongo_URL = "mongodb://127.0.0.1:27017/maakaan";
 
 main()
@@ -50,11 +54,22 @@ const validateListing = (req, res, next) => {
   }
 };
 
+const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(","); //to get all the error messages in a single string
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+};
+
 app.delete(
   "/listing/:id",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    const deletedListing = await Listing.deleteOne({ _id: id });
+    const deletedListing = await Listing.findOneAndDelete({ _id: id });
     console.log("Listing Deleted"); // This will delete the listing with the given id from the database
     console.log(deletedListing);
     res.redirect("/listing");
@@ -124,7 +139,7 @@ app.get(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     // console.log(id);
-    let listing = await Listing.findById(id);
+    let listing = await Listing.findById(id).populate("reviews");
     // console.log(listing);
     res.render("listing/show.ejs", { listing });
   }),
@@ -166,6 +181,38 @@ app.get(
 //       console.log(err);
 //     });
 // });
+
+//review
+//post review request
+app.post(
+  "/listing/:id/reviews",
+  validateReview,
+  wrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    // console.log(listing);
+
+    let newReview = new Review(req.body.review);
+    console.log(newReview);
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
+
+    console.log("new review saved");
+    res.redirect(`/listing/${listing._id}`);
+  }),
+);
+//review
+//to delete reviews
+app.delete(
+  "/listing/:id/reviews/:reviewId",
+  wrapAsync(async (req, res) => {
+    let { id, reviewId } = req.params; // assignment of id and reviewId depent on the path which one is placed first and which one later
+    await Review.findByIdAndDelete(reviewId);
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    console.log("Review Deleted");
+    res.redirect(`/listing/${id}`);
+  }),
+);
 
 app.get("/", (req, res) => {
   res.send("Han ji! Root server eetthe");

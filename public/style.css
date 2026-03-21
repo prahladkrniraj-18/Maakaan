@@ -42,7 +42,7 @@
   flex-direction: row;
   justify-content: space-evenly;
 } */
-.card {
+.card-listing {
   margin-bottom: 2rem;
   /* margin-left: 1rem; */
   border: none;
