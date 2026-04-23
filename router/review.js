@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router({ mergeParams: true }); //to access the params of parent router (listing router) in this review router mergeParams is set to true
 
 const listing = require("./listing.js");
 
@@ -43,7 +43,7 @@ router.post(
     listing.reviews.push(newReview);
     await newReview.save();
     await listing.save();
-
+    req.flash("success", "Review added ");
     console.log("new review saved");
     res.redirect(`/listing/${listing._id}`);
   }),
@@ -56,6 +56,7 @@ router.delete(
     let { id, reviewId } = req.params; // assignment of id and reviewId depent on the path which one is placed first and which one later
     await Review.findByIdAndDelete(reviewId);
     await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    req.flash("success", "Review deleted ");
     console.log("Review Deleted");
     res.redirect(`/listing/${id}`);
   }),

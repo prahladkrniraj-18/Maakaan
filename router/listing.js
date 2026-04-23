@@ -49,6 +49,7 @@ router.delete(
     const deletedListing = await Listing.findOneAndDelete({ _id: id });
     console.log("Listing Deleted"); // This will delete the listing with the given id from the database
     console.log(deletedListing);
+    req.flash("success", "Listing deleted successfully!");
     res.redirect("/listing");
   }),
 );
@@ -65,6 +66,7 @@ router.put(
 
     await Listing.updateOne({ _id: id }, req.body.listing).then(() => {
       console.log("Listing Updated");
+      req.flash("success", "Listing updated successfully!");
       res.redirect(`/listing/${id}`);
     });
   }),
@@ -103,6 +105,7 @@ router.post(
       };
     }
     await newListing.save();
+    req.flash("success", "New listing created successfully!"); //to set a flash message with key "success" and value "New listing created successfully!"
     console.log("New Listing Created");
     res.redirect("/listing");
   }),
@@ -120,6 +123,10 @@ router.get(
     let { id } = req.params;
     // console.log(id);
     let listing = await Listing.findById(id).populate("reviews");
+    if (!listing) {
+      req.flash("error", "Listing you are trying to access does not exist!");
+      return res.redirect("/listing");
+    }
     // console.log(listing);
     res.render("listing/show.ejs", { listing });
   }),
@@ -131,6 +138,10 @@ router.get(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
+    if (!listing) {
+      req.flash("error", "Listing you are trying to access does not exist!");
+      return res.redirect("/listing");
+    }
     res.render("listing/edit.ejs", { listing });
   }),
 );
