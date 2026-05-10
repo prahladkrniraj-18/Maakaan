@@ -21,6 +21,15 @@
         <a class="nav-link" href="/listing">All Listings</a>
         <a class="nav-link" href="/listing/new">Create Listing</a>
       </div>
+      <div class="navbar-nav ms-auto me0">
+        <% if (!currentUser) { %>
+        <a class="nav-link" aria-current="page" href="/user/signup">Sign up</a>
+        <a class="nav-link" href="/user/login">Log in</a>
+        <% } %>
+        <% if (currentUser) { %>
+        <a class="nav-link" href="/user/logout">Log out</a>
+        <% } %>
+      </div>
     </div>
   </div>
 </nav>

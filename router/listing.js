@@ -3,24 +3,11 @@ const router = express.Router();
 
 const wrapAsync = require("../util/wrapAsync.js"); //to wrap (*only*) => async functions and catch errors in them
 
-const ExpressError = require("../util/ExpressError.js"); //custom error class to create error objects with status code and message
-
-const { listingSchema } = require("../schema.js"); //for validating the data sent in request body for creating and updating listing
-
 const { reviewSchema } = require("../review_schema.js");
 
 const Listing = require("../models/listing.js");
 
-const validateListing = (req, res, next) => {
-  const { error } = listingSchema.validate(req.body);
-  console.log(error);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(","); //to get all the error messages in a single string
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
 // app.get("/listTesting", async (req, res) => {
 //   let newListing = new Listing({
@@ -44,6 +31,8 @@ const validateListing = (req, res, next) => {
 //Route for deleting a listing
 router.delete(
   "/:id",
+  isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const deletedListing = await Listing.findOneAndDelete({ _id: id });
@@ -57,6 +46,8 @@ router.delete(
 //Route for updating a listing
 router.put(
   "/:id",
+  isLoggedIn,
+  isOwner,
   validateListing,
   wrapAsync(async (req, res) => {
     if (!req.body || !req.body.listing) {
@@ -75,6 +66,7 @@ router.put(
 //create Route for creating new listing
 router.post(
   "/new",
+  isLoggedIn,
   validateListing,
   wrapAsync(async (req, res, next) => {
     // const { title, description, image, price, location, country } = req.body;
@@ -93,10 +85,6 @@ router.post(
       throw new ExpressError(400, result.error);
     }
 
-    // if (!req.body || !req.body.listing) {
-    //   throw new ExpressError(400, "Send valid data for creating listing!");
-    // }
-
     const newListing = new Listing(req.body.listing); //directly passing the form data object
     if (!newListing.image || !newListing.image.url) {
       newListing.image = {
@@ -104,6 +92,7 @@ router.post(
         url: "https://images.pexels.com/photos/2325447/pexels-photo-2325447.jpeg",
       };
     }
+    newListing.owner = req.user._id;
     await newListing.save();
     req.flash("success", "New listing created successfully!"); //to set a flash message with key "success" and value "New listing created successfully!"
     console.log("New Listing Created");
@@ -112,7 +101,7 @@ router.post(
 );
 
 //Route for rendering form to create new listing
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("listing/new.ejs");
 });
 
@@ -122,7 +111,14 @@ router.get(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     // console.log(id);
-    let listing = await Listing.findById(id).populate("reviews");
+    let listing = await Listing.findById(id)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author", //nested popul;ate for author
+        },
+      })
+      .populate("owner");
     if (!listing) {
       req.flash("error", "Listing you are trying to access does not exist!");
       return res.redirect("/listing");
@@ -135,6 +131,8 @@ router.get(
 //Route for rendering form to edit listing
 router.get(
   "/:id/edit",
+  isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);

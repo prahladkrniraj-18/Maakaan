@@ -1,0 +1,38 @@
+<% layout("/layouts/boilerplate")-%>
+<body>
+  <div class="row">
+    <h2 class="col-8 offset-2">LogIn to Maakaan</h2>
+    <div class="col-8 offset-2">
+      <form
+        action="/user/login"
+        method="post"
+        class="needs-validation"
+        novalidate
+      >
+        <div class="mb-3">
+          <label for="username" class="form-label">Username: </label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            class="form-control"
+            placeholder="username"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">password: </label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter Password"
+            required
+          />
+        </div>
+        <button class="btn btn-red btn-outline-danger">Login</button>
+      </form>
+    </div>
+  </div>
+</body>

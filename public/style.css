@@ -48,7 +48,7 @@
   border: none;
   transition: box-shadow 0.3s;
 }
-/* .card:hover {
+/* .card-listing:hover {
   box-shadow: 1px 1px 5px black;
 } */
 .card-img-top {
@@ -108,7 +108,7 @@ body {
   min-height: 100vh;
 }
 .container {
-  margin-top: auto;
+  flex-grow: 1;
 }
 
 /* Edit Profile Page  */

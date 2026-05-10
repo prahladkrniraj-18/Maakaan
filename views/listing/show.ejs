@@ -11,10 +11,15 @@
         alt="listing_image"
       />
       <div class="card-body">
+        <p>
+          Owner:
+          <%= listing.owner.username %>
+        </p>
         <p><%= listing.description %></p>
         <p>&#8377;<%= listing.price.toLocaleString("en-IN") %></p>
         <p><%= listing.location %></p>
         <p><%= listing.country %></p>
+        <% if (currentUser && currentUser._id.equals(listing.owner._id)) { %>
         <div class="button">
           <form action="/listing/<%=listing._id %>/edit" method="get">
             <button class="btn btn-red btn-outline-danger">Edit</button>
@@ -26,6 +31,7 @@
             <button class="btn btn-dark">Delete</button>
           </form>
         </div>
+        <% } %>
       </div>
       <br />
       <!-- <a href="/listing"><button>Back to Listings</button></a> -->
@@ -33,6 +39,7 @@
     <hr />
     <div class="card col-6 offset-2">
       <h1>Leave a Review</h1>
+      <% if (currentUser) { %>
       <form
         action="/listing/<%= listing._id %>/reviews"
         method="post"
@@ -69,13 +76,14 @@
           Submit
         </button>
       </form>
+      <% } %>
       <hr />
       <!-- prettier-ignore -->
       <div class="row" >
         <% listing.reviews.forEach(review => { %>
           <div class="card col-5 mb-3 ms-3 ">
             <div class="card-body">
-              <b><p class="card-title">Mr. X</p></b>
+              <b><p class="card-title">@<%=review.author.username%></p></b>
               <p class="card-text">Rating: <%= review.rating %> </p>
               <p class="card-text"><%= review.comment %> </p>
               <form action="/listing/<%= listing._id %>/reviews/<%= review._id%>?_method=DELETE" method="post" class="mb-3">

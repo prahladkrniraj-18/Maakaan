@@ -7,38 +7,30 @@ const wrapAsync = require("../util/wrapAsync.js"); //to wrap (*only*) => async f
 
 const ExpressError = require("../util/ExpressError.js"); //custom error class to create error objects with status code and message
 
-const { listingSchema } = require("../schema.js"); //for validating the data sent in request body for creating and updating listing
-
-const { reviewSchema } = require("../review_schema.js");
-
 const Review = require("../models/review.js");
 
 const Listing = require("../models/listing.js");
 
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  console.log(error);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(","); //to get all the error messages in a single string
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+const {
+  validateReview,
+  isLoggedIn,
+  isReviewauthor,
+} = require("../middleware.js");
 
 //review
 //post review request
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   wrapAsync(async (req, res) => {
     let listing = await Listing.findById(req.params.id);
     if (!listing) {
       throw new ExpressError(404, "Listing not found");
     }
-    // console.log(listing);
 
     let newReview = new Review(req.body.review);
+    newReview.author = req.user._id;
     console.log(newReview);
     listing.reviews.push(newReview);
     await newReview.save();
@@ -52,6 +44,8 @@ router.post(
 //to delete reviews
 router.delete(
   "/:reviewId",
+  isLoggedIn,
+  isReviewauthor,
   wrapAsync(async (req, res) => {
     let { id, reviewId } = req.params; // assignment of id and reviewId depent on the path which one is placed first and which one later
     await Review.findByIdAndDelete(reviewId);
