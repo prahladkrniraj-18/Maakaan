@@ -123,3 +123,13 @@ body {
 .show-image {
   height: 30vh;
 }
+
+/* #map  */
+#map {
+  width: 600px;
+  height: 80vh;
+}
+
+.map {
+  margin-bottom: 2rem;
+}
