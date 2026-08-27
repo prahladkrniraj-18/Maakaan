@@ -87,9 +87,16 @@ module.exports.updateListing = wrapAsync(async (req, res) => {
     let url = req.file.path;
     let filename = req.file.filename;
     updatedListing.image = { filename, url };
-    await updatedListing.save();
-    console.log("Listing Updated");
   }
+  const geocodingResponse = await geocodingClient
+    .forwardGeocode({
+      query: `${req.body.listing.location}, ${req.body.listing.country}`,
+      limit: 1,
+    })
+    .send();
+  updatedListing.geometry = geocodingResponse.body.features[0].geometry;
+  await updatedListing.save();
+  console.log("Listing Updated");
   req.flash("success", "Listing updated successfully!");
   res.redirect(`/listing/${id}`);
 });

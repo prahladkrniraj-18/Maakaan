@@ -70,18 +70,49 @@
             <div class="invalid-feedback">Please enter a location.</div>
           </div>
         </div>
-        <div class="mb-3">
-          <label for="country" class="form-label">Country: </label>
-          <input
-            type="text"
-            name="listing[country]"
-            id="country"
-            class="form-control"
-            placeholder="Enter Country"
-            value="<%=listing.country %>"
-            required
-          />
-          <div class="invalid-feedback">Please enter a country.</div>
+        <div class="row">
+          <div class="mb-3 col-md-8">
+            <label for="country" class="form-label">Country: </label>
+            <input
+              type="text"
+              name="listing[country]"
+              id="country"
+              class="form-control"
+              placeholder="Enter Country"
+              value="<%=listing.country %>"
+              required
+            />
+            <div class="invalid-feedback">Please enter a country.</div>
+          </div>
+          <div class="mb-3 col-md-4">
+            <label for="category" class="form-label">Category: </label>
+            <%const categories = [
+              "Trending",
+              "Rooms",
+              "Iconic Cites",
+              "Mountains",
+              "Castles",
+              "Amazing Pools",
+              "Camping",
+              "Farms",
+              "Arctic"
+              ];%>
+            <select
+              name="listing[category]"
+              id="category"
+              class="form-control"
+              required
+            >
+            <% categories.forEach(category => { %>
+              <option
+                value="<%= category %>"
+                <% if (listing.category === category) { %> selected <% } %>>
+                <%= category %>
+              </option>
+            <% }) %>
+            </select>
+            <div class="invalid-feedback">Please select a category.</div>
+          </div>
         </div>
         <div class="mb-3">
           <div>
@@ -95,7 +126,6 @@
             name="listing[image][url]"
             id="image"
             class="form-control"
-            required
           />
         </div>
         <button type="submit" class="btn btn-red btn-outline-danger mt-3">

@@ -18,6 +18,7 @@ const ejsMate = require("ejs-mate");
 app.engine("ejs", ejsMate); //for using ejs-mate layouts and partials
 
 const session = require("express-session");
+const { MongoStore } = require("connect-mongo");
 
 const flash = require("connect-flash");
 
@@ -29,15 +30,52 @@ if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 
+// const mongo_URL = "mongodb://127.0.0.1:27017/maakaan";
+const MongoAtlusDB_URL = process.env.MongoAtlusDB_URL;
+
+if (!MongoAtlusDB_URL) {
+  throw new Error("MongoAtlusDB_URL is not set in the environment");
+}
+
+main()
+  .then(() => {
+    console.log("Connected to DataBase");
+    app.listen(8080, () => {
+      console.log("Server is listening to port 8080");
+    });
+  })
+  .catch((err) => {
+    console.error("Database connection failed:", err);
+    process.exitCode = 1;
+  });
+
+async function main() {
+  await mongoose.connect(MongoAtlusDB_URL);
+}
+
+const store = MongoStore.create({
+  mongoUrl: MongoAtlusDB_URL,
+  crypto: {
+    secret: "mysupersecretcode",
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", (err) => {
+  console.error("MongoDB session store error:", err);
+});
+
 const sessionConfig = {
+  store,
   secret: "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: Date.now() + 7 * 24 * 60 * 60 * 1000, //7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000, //7 days
     httpOnly: true, //to prevent client side script s from accessing the cookie
   },
 };
+
 app.use(session(sessionConfig)); //to use sessions in our app, it will add a session object to the request object and also set a cookie in the browser with the session id.
 
 app.use(passport.initialize()); //to initialize passport for authentication
@@ -58,20 +96,6 @@ const listingRouter = require("./router/listing.js");
 const reviewRouter = require("./router/review.js");
 
 const userRouter = require("./router/user.js");
-
-const mongo_URL = "mongodb://127.0.0.1:27017/maakaan";
-
-main()
-  .then(() => {
-    console.log("Connected to DataBase");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
-async function main() {
-  await mongoose.connect(mongo_URL);
-}
 
 // app.use("/demouser", async (req, res) => {
 //   let fakeUser = new User({
@@ -108,8 +132,4 @@ app.use((err, req, res, next) => {
   let { statusCode = 500, message = "Something went wrong!" } = err;
 
   res.status(statusCode).render("error.ejs", { statusCode, message }); //if we send response here, then the next middlewares will not run as response is already sent.
-});
-
-app.listen(8080, () => {
-  console.log("Server is listening to port 8080");
 });

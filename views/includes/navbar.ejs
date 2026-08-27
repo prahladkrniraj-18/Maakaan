@@ -1,3 +1,27 @@
+<style>
+  .search-btn {
+    background-color: #fe424d;
+    color: white;
+  }
+  .search-btn:hover {
+    background-color: #fe424d;
+    color: white;
+  }
+  .search-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+    margin-left: 1rem;
+  }
+  .search-input {
+    border-radius: 25rem;
+    font-size: 01rem;
+    text-align: center;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+  }
+</style>
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
   <div class="container-fluid">
     <a class="" href="/listing"><i class="fa-regular fa-house"></i></a>
@@ -17,17 +41,31 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link" aria-current="page" href="/listing">Home</a>
-        <a class="nav-link" href="/listing">All Listings</a>
-        <a class="nav-link" href="/listing/new">Create Listing</a>
+        <!-- <a class="nav-link" aria-current="page" href="/listing">Explore</a> -->
+      </div>
+      <div class="search-bar ms-auto">
+        <form class="d-flex" role="search">
+          <input
+            class="form-control search-input"
+            type="search"
+            placeholder="Search destination"
+          />
+          <button class="btn btn-outline search-btn" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search
+          </button>
+        </form>
       </div>
       <div class="navbar-nav ms-auto me0">
+        <a class="nav-link" href="/listing/new">Become a host</a>
         <% if (!currentUser) { %>
-        <a class="nav-link" aria-current="page" href="/user/signup">Sign up</a>
-        <a class="nav-link" href="/user/login">Log in</a>
+        <a class="nav-link" aria-current="page" href="/user/signup"
+          ><b> Sign up</b></a
+        >
+        <a class="nav-link" href="/user/login"><b>Log in</b></a>
         <% } %>
         <% if (currentUser) { %>
-        <a class="nav-link" href="/user/logout">Log out</a>
+        <a class="nav-link" href="/user/logout"><b>Log out</b></a>
         <% } %>
       </div>
     </div>
